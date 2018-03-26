@@ -3,7 +3,9 @@
 The goal of this project is to train a fully convolutional network (FCN) to segment images into two pixel classes: road and non-road.
 The decoding part of the FCN is based on the pre-trained VGG model.
 The trained FCN must then be deployed on street images and/or videos.
+
 ## Implementation
+
 The FCN is implemented in Python in the main.py file. The “data” directory contains the labeled images dataset to train the encoder plus some images for testing. The pre-trained decoder model is also saved in there.
 
 The concept of fully convolutional network is explained briefly in the following drawing:
@@ -25,14 +27,17 @@ Training is done via standard backpropagation, e.g. with Adam optimizer, and the
 Once the training is completed, the resulting graph can be frozen and used for inference. Some optimization techniques (operation fusing, quantization) can be added to improve performance for real-time deployment.
 
 ##Code explanation
+
 The code is built up with different functions described here.
 
 ###Loading VGG model
+
 The pre-trained VGG model is loaded here and some layers are extracted for further use. In particular, the input and output layer are saved, together with the pooling layers 3 and 4, from which skip connections to the decoder will depart.
 
 	input_image, keep_prob, layer3_out, layer4_out, layer7_out = load_vgg(sess, vgg_path)
 
 ###Adding extra layers
+
 We can now add extra layers to the graph:
 
 •	A 1x1 convolution at the output of the VGG model
@@ -64,6 +69,7 @@ The result is the output layer of the new network:
 	output_layer = layers(layer3_out, layer4_out, layer7_out, num_classes)
 
 ###Configure the optimizer
+
 The network is trained with an Adam optimizer using softmax cross-entropy loss.
 Logits and labels are all resized to a [#pixels,#classes] tensor.
 
@@ -92,6 +98,7 @@ By the end of the training the loss is still stable around 0.1, so adding more e
 ![training](training4.jpg)
 
 ###Inference
+
 Once training is completed the model is saved and can be reused for inference.
 
 	helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
@@ -115,6 +122,7 @@ Some others are quite bad:
 
 
 ##Comments
+
 A larger dataset would certainly improve prediction quality.
 
 Also, the VGG model is very resource-consuming. A smaller model, e.g. MobilNet, could be used with limited quality loss but massive performance improvement.
