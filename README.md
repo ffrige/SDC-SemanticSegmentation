@@ -26,17 +26,17 @@ Training is done via standard backpropagation, e.g. with Adam optimizer, and the
 
 Once the training is completed, the resulting graph can be frozen and used for inference. Some optimization techniques (operation fusing, quantization) can be added to improve performance for real-time deployment.
 
-##Code explanation
+## Code explanation
 
 The code is built up with different functions described here.
 
-###Loading VGG model
+### Loading VGG model
 
 The pre-trained VGG model is loaded here and some layers are extracted for further use. In particular, the input and output layer are saved, together with the pooling layers 3 and 4, from which skip connections to the decoder will depart.
 
 	input_image, keep_prob, layer3_out, layer4_out, layer7_out = load_vgg(sess, vgg_path)
 
-###Adding extra layers
+### Adding extra layers
 
 We can now add extra layers to the graph:
 
@@ -68,14 +68,14 @@ The result is the output layer of the new network:
 
 	output_layer = layers(layer3_out, layer4_out, layer7_out, num_classes)
 
-###Configure the optimizer
+### Configure the optimizer
 
 The network is trained with an Adam optimizer using softmax cross-entropy loss.
 Logits and labels are all resized to a [#pixels,#classes] tensor.
 
 	logits, train_op, cross_entropy_loss = optimize(output_layer, correct_label, learning_rate, num_classes)
 
-###Training
+### Training
 We let the training run on a standard CPU with the following parameters:
 
 -	batch size = 2
@@ -97,7 +97,7 @@ By the end of the training the loss is still stable around 0.1, so adding more e
 
 ![training](training4.jpg)
 
-###Inference
+### Inference
 
 Once training is completed the model is saved and can be reused for inference.
 
@@ -121,7 +121,7 @@ Some others are quite bad:
 ![tests](test5.png)
 
 
-##Comments
+## Comments
 
 A larger dataset would certainly improve prediction quality.
 
